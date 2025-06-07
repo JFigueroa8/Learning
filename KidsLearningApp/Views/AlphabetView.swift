@@ -7,8 +7,8 @@ struct AlphabetView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [
-                GridItem(.adaptive(minimum: 100, maximum: 120))
-            ], spacing: 20) {
+                GridItem(.adaptive(minimum: 75, maximum: 90))
+            ], spacing: 15) {
                 ForEach(alphabet, id: \.self) { letter in
                     NavigationLink(destination: LetterDetailView(letter: String(letter), alphabet: alphabet, navigationDirection: .forward)) {
                         LetterCard(letter: String(letter))
@@ -41,23 +41,23 @@ struct LetterCard: View {
                 .fill(Color.white)
                 .shadow(radius: 3)
             
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Text(letter)
-                    .font(.system(size: 40, weight: .bold))
+                    .font(.system(size: 30, weight: .bold))
                     .foregroundColor(.blue)
                 
                 Text(letter.lowercased())
-                    .font(.system(size: 32, weight: .medium))
+                    .font(.system(size: 24, weight: .medium))
                     .foregroundColor(.blue.opacity(0.8))
                 
                 Text(getExampleWord(for: letter))
-                    .font(.system(size: 14))
+                    .font(.system(size: 12))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 4)
             }
         }
-        .frame(height: 140)
+        .frame(height: 105)
         .overlay(
             RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.blue, lineWidth: 2)
