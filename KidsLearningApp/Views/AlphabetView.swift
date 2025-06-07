@@ -131,14 +131,14 @@ struct LetterDetailView: View {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }) {
-                        NavigationButton(letter: String(alphabet[currentIndex - 1]), direction: "Previous")
+                        NavigationButton(letter: previousLetter!, direction: "Previous")
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
                 
                 if currentIndex < alphabet.count - 1 {
-                    NavigationLink(destination: LetterDetailView(letter: String(alphabet[currentIndex + 1]), alphabet: alphabet, navigationDirection: .forward)) {
-                        NavigationButton(letter: String(alphabet[currentIndex + 1]), direction: "Next")
+                    NavigationLink(destination: LetterDetailView(letter: nextLetter!, alphabet: alphabet, navigationDirection: .forward)) {
+                        NavigationButton(letter: nextLetter!, direction: "Next")
                     }
                 }
             }

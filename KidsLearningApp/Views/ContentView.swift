@@ -8,21 +8,22 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 30) {
-                    Text("Kids Learning")
+                    Text("Kids Learning") // Added back the text view
                         .font(.system(size: 40, weight: .bold))
                         .foregroundColor(.blue)
                     
-                    NavigationLink(destination: AlphabetView().navigationBarHidden(true)) {
+                    NavigationLink(destination: AlphabetView()) {
                         LearningButton(title: "Learn Alphabet", systemImage: "textformat.abc")
                     }
                     
-                    NavigationLink(destination: NumbersView().navigationBarHidden(true)) {
+                    NavigationLink(destination: NumbersView()) {
                         LearningButton(title: "Learn Numbers", systemImage: "textformat.123")
                     }
                 }
                 .padding()
             }
-            .navigationBarHidden(true)
+            .navigationBarHidden(true) // Hid the navigation bar again
+            .navigationBarItems(leading: EmptyView())
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
