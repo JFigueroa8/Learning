@@ -37,6 +37,16 @@ struct NumbersView: View {
             }
         }
         .navigationTitle("Numbers")
+        .navigationBarItems(
+            trailing:
+                NavigationLink(destination: ContentView().navigationBarHidden(true)) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "house")
+                        Text("Home")
+                    }
+                    .foregroundColor(.blue)
+                }
+        )
         .background(Color.blue.opacity(0.1))
         .sheet(isPresented: $showingCountingExercise) {
             CountingExerciseView()
@@ -191,14 +201,9 @@ struct NumberDetailView: View {
             // Navigation buttons
             HStack(spacing: 40) {
                 if currentIndex > 0 {
-                    Button(action: {
-                        withAnimation {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }) {
+                    NavigationLink(destination: NumberDetailView(number: previousNumber!, numbers: numbers, navigationDirection: .backward)) {
                         NavigationButton(letter: "\(previousNumber!)", direction: "Previous")
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
                 
                 if currentIndex < numbers.count - 1 {
@@ -215,7 +220,7 @@ struct NumberDetailView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(
             leading: 
-                NavigationLink(destination: NumbersView()) {
+                NavigationLink(destination: NumbersView().navigationBarHidden(true)) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                         Text("Back")
@@ -223,7 +228,7 @@ struct NumberDetailView: View {
                     .foregroundColor(.blue)
                 },
             trailing:
-                NavigationLink(destination: ContentView()) {
+                NavigationLink(destination: ContentView().navigationBarHidden(true)) {
                     HStack(spacing: 4) {
                         Image(systemName: "house")
                         Text("Home")

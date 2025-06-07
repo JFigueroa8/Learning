@@ -18,6 +18,16 @@ struct AlphabetView: View {
             .padding()
         }
         .navigationTitle("Alphabet")
+        .navigationBarItems(
+            trailing:
+                NavigationLink(destination: ContentView().navigationBarHidden(true)) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "house")
+                        Text("Home")
+                    }
+                    .foregroundColor(.blue)
+                }
+        )
         .background(Color.blue.opacity(0.1))
     }
 }
@@ -126,14 +136,9 @@ struct LetterDetailView: View {
             // Navigation buttons
             HStack(spacing: 40) {
                 if currentIndex > 0 {
-                    Button(action: {
-                        withAnimation {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }) {
+                    NavigationLink(destination: LetterDetailView(letter: previousLetter!, alphabet: alphabet, navigationDirection: .backward)) {
                         NavigationButton(letter: previousLetter!, direction: "Previous")
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
                 
                 if currentIndex < alphabet.count - 1 {
@@ -151,7 +156,7 @@ struct LetterDetailView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(
             leading: 
-                NavigationLink(destination: AlphabetView()) {
+                NavigationLink(destination: AlphabetView().navigationBarHidden(true)) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                         Text("Back")
@@ -159,7 +164,7 @@ struct LetterDetailView: View {
                     .foregroundColor(.blue)
                 },
             trailing:
-                NavigationLink(destination: ContentView()) {
+                NavigationLink(destination: ContentView().navigationBarHidden(true)) {
                     HStack(spacing: 4) {
                         Image(systemName: "house")
                         Text("Home")
