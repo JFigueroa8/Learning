@@ -6,7 +6,7 @@ struct NumbersView: View {
     @State private var audioPlayer: AVAudioPlayer?
     @State private var showingCountingExercise = false
     
-    let numbers = Array(1...20)
+    let numbers = Array(1...100)
     
     var body: some View {
         ScrollView {
@@ -165,6 +165,7 @@ struct NumberDetailView: View {
     let numbers: [Int]
     let navigationDirection: NavigationDirection
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var speechSynthesizer = AVSpeechSynthesizer()
     @Environment(\.presentationMode) var presentationMode
     
     private var currentIndex: Int {
@@ -195,7 +196,7 @@ struct NumberDetailView: View {
             }
             .padding()
             .onTapGesture {
-                playNumberSound(number: number)
+                speakNumber(number: number)
             }
             
             // Navigation buttons
@@ -241,18 +242,13 @@ struct NumberDetailView: View {
             .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
     }
     
-    private func playNumberSound(number: Int) {
-        guard let url = Bundle.main.url(forResource: "\(number)", withExtension: "mp3") else {
-            print("Sound file not found for number: \(number)")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play sound: \(error.localizedDescription)")
-        }
+    private func speakNumber(number: Int) {
+        let utterance = AVSpeechUtterance(string: "\(number)")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.4
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        speechSynthesizer.speak(utterance)
     }
     
     private func numberToWord(_ number: Int) -> String {

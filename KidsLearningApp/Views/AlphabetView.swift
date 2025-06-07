@@ -66,9 +66,9 @@ struct LetterCard: View {
     
     private func getExampleWord(for letter: String) -> String {
         let words = [
-            "A": "Apple", "B": "Ball", "C": "Cat", "D": "Dog",
+            "A": "Alannah", "B": "Ball", "C": "Cat", "D": "Dog",
             "E": "Elephant", "F": "Fish", "G": "Giraffe", "H": "House",
-            "I": "Ice cream", "J": "Jump", "K": "Kite", "L": "Lion",
+            "I": "Ice cream", "J": "Jump", "K": "Kobe", "L": "Lion",
             "M": "Moon", "N": "Nest", "O": "Orange", "P": "Pizza",
             "Q": "Queen", "R": "Rainbow", "S": "Sun", "T": "Tree",
             "U": "Umbrella", "V": "Violin", "W": "Water", "X": "Xylophone",
@@ -88,6 +88,7 @@ struct LetterDetailView: View {
     let alphabet: [Character]
     let navigationDirection: NavigationDirection
     @State private var audioPlayer: AVAudioPlayer?
+    @State private var speechSynthesizer = AVSpeechSynthesizer()
     @Environment(\.presentationMode) var presentationMode
     
     private var currentIndex: Int {
@@ -118,7 +119,7 @@ struct LetterDetailView: View {
             }
             .padding()
             .onTapGesture {
-                playLetterSound(letter: letter)
+                speakLetter(letter: letter)
             }
             
             // Example word
@@ -131,6 +132,9 @@ struct LetterDetailView: View {
                     .font(.system(size: 40, weight: .semibold))
                     .foregroundColor(.blue)
                     .transition(.scale.combined(with: .opacity))
+                    .onTapGesture {
+                        speakWord(word: getExampleWord(for: letter))
+                    }
             }
             
             // Navigation buttons
@@ -177,25 +181,29 @@ struct LetterDetailView: View {
             .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
     }
     
-    private func playLetterSound(letter: String) {
-        guard let url = Bundle.main.url(forResource: letter, withExtension: "mp3") else {
-            print("Sound file not found for letter: \(letter)")
-            return
-        }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play sound: \(error.localizedDescription)")
-        }
+    private func speakLetter(letter: String) {
+        let utterance = AVSpeechUtterance(string: letter.lowercased())
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.4
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        speechSynthesizer.speak(utterance)
+    }
+    
+    private func speakWord(word: String) {
+        let utterance = AVSpeechUtterance(string: word)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.4
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        speechSynthesizer.speak(utterance)
     }
     
     private func getExampleWord(for letter: String) -> String {
         let words = [
-            "A": "Apple", "B": "Ball", "C": "Cat", "D": "Dog",
+            "A": "Alannah", "B": "Ball", "C": "Cat", "D": "Dog",
             "E": "Elephant", "F": "Fish", "G": "Giraffe", "H": "House",
-            "I": "Ice cream", "J": "Jump", "K": "Kite", "L": "Lion",
+            "I": "Ice cream", "J": "Jump", "K": "Kobe", "L": "Lion",
             "M": "Moon", "N": "Nest", "O": "Orange", "P": "Pizza",
             "Q": "Queen", "R": "Rainbow", "S": "Sun", "T": "Tree",
             "U": "Umbrella", "V": "Violin", "W": "Water", "X": "Xylophone",
