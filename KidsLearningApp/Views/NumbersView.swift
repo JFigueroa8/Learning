@@ -15,10 +15,9 @@ struct NumbersView: View {
                     GridItem(.adaptive(minimum: 80, maximum: 100))
                 ], spacing: 20) {
                     ForEach(numbers, id: \.self) { number in
-                        NumberCard(number: number)
-                            .onTapGesture {
-                                playNumberSound(number: number)
-                            }
+                        NavigationLink(destination: NumberDetailView(number: number, numbers: numbers, navigationDirection: .forward)) {
+                            NumberCard(number: number)
+                        }
                     }
                 }
                 .padding()
@@ -148,6 +147,113 @@ struct CountingExerciseView: View {
             .padding()
         }
         .padding()
+    }
+}
+
+struct NumberDetailView: View {
+    let number: Int
+    let numbers: [Int]
+    let navigationDirection: NavigationDirection
+    @State private var audioPlayer: AVAudioPlayer?
+    @Environment(\.presentationMode) var presentationMode
+    
+    private var currentIndex: Int {
+        numbers.firstIndex(of: number) ?? 0
+    }
+    
+    private var previousNumber: Int? {
+        currentIndex > 0 ? numbers[currentIndex - 1] : nil
+    }
+    
+    private var nextNumber: Int? {
+        currentIndex < numbers.count - 1 ? numbers[currentIndex + 1] : nil
+    }
+    
+    var body: some View {
+        VStack(spacing: 30) {
+            // Number display
+            VStack(spacing: 20) {
+                Text("\(number)")
+                    .font(.system(size: 120, weight: .bold))
+                    .foregroundColor(.blue)
+                    .transition(.scale.combined(with: .opacity))
+                
+                Text(numberToWord(number))
+                    .font(.system(size: 40, weight: .medium))
+                    .foregroundColor(.blue.opacity(0.8))
+                    .transition(.scale.combined(with: .opacity))
+            }
+            .padding()
+            .onTapGesture {
+                playNumberSound(number: number)
+            }
+            
+            // Navigation buttons
+            HStack(spacing: 40) {
+                if currentIndex > 0 {
+                    Button(action: {
+                        withAnimation {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }) {
+                        NavigationButton(letter: "\(previousNumber!)", direction: "Previous")
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                
+                if currentIndex < numbers.count - 1 {
+                    NavigationLink(destination: NumberDetailView(number: nextNumber!, numbers: numbers, navigationDirection: .forward)) {
+                        NavigationButton(letter: "\(nextNumber!)", direction: "Next")
+                    }
+                }
+            }
+            .padding()
+        }
+        .padding()
+        .navigationTitle("Number \(number)")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(
+            leading: 
+                NavigationLink(destination: NumbersView()) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .foregroundColor(.blue)
+                },
+            trailing:
+                NavigationLink(destination: ContentView()) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "house")
+                        Text("Home")
+                    }
+                    .foregroundColor(.blue)
+                }
+        )
+        .transition(navigationDirection == .forward ? 
+            .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)) :
+            .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
+    }
+    
+    private func playNumberSound(number: Int) {
+        guard let url = Bundle.main.url(forResource: "\(number)", withExtension: "mp3") else {
+            print("Sound file not found for number: \(number)")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play sound: \(error.localizedDescription)")
+        }
+    }
+    
+    private func numberToWord(_ number: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        return formatter.string(from: NSNumber(value: number)) ?? ""
     }
 }
 
